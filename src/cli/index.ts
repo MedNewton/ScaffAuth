@@ -1,12 +1,13 @@
 import { Command } from "commander";
 import { runInit } from "./commands/init.js";
+import packageJson from "../../package.json";
 
 const program = new Command();
 
 program
   .name("create-scaffauth")
   .description("Scaffold production-ready Better Auth backends")
-  .version("0.1.0");
+  .version(packageJson.version);
 
 program
   .command("init", { isDefault: true })
