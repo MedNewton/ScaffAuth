@@ -13,9 +13,10 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "better-auth": "^1.2.0",
+    "better-auth": "1.2.0",
     "drizzle-orm": "^0.38.0",
     "hono": "^4.7.0",
+    "@hono/node-server": "^1.13.8",
     "mysql2": "^3.11.0"
 {{#if (eq emailProvider "resend")}},
     "resend": "^4.0.0"{{/if}}{{#if (eq emailProvider "sendgrid")}},
@@ -24,7 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.0",
-    "drizzle-kit": "^0.30.0",
+    "drizzle-kit": "^0.31.8",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
 {{#if (eq emailProvider "smtp")}},
