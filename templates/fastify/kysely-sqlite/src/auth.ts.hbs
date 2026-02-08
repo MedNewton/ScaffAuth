@@ -1,5 +1,4 @@
 import { betterAuth } from "better-auth";
-import { kyselyAdapter } from "better-auth/adapters/kysely";
 import { db } from "../db/db";
 {{#if twoFactor}}
 import { twoFactor } from "better-auth/plugins";
@@ -31,9 +30,10 @@ const transporter = nodemailer.createTransport({
 {{/if}}
 
 export const auth = betterAuth({
-  database: kyselyAdapter(db, {
+  database: {
+    db,
     type: "sqlite",
-  }),
+  },
   emailAndPassword: {
     enabled: true,
 {{#if emailProvider}}

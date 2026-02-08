@@ -14,7 +14,7 @@ app.use(
 );
 
 // Mount Better Auth handler
-app.all("/api/auth/*", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 // Health check
 app.get("/", (_req, res) => {
