@@ -1,0 +1,33 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+coverage/
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# claude
+
+.claude/
+PROGRESS.md
+SCAFFAUTH_ROADMAP.md

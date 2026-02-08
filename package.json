@@ -1,0 +1,71 @@
+{
+  "name": "create-scaffauth",
+  "version": "0.1.0",
+  "description": "Scaffold production-ready Better Auth backends",
+  "type": "module",
+  "bin": {
+    "create-scaffauth": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/index.js",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "auth",
+    "authentication",
+    "better-auth",
+    "backend",
+    "cli",
+    "scaffolding",
+    "hono",
+    "fastify",
+    "express",
+    "oauth",
+    "2fa"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scaffauth/create-scaffauth"
+  },
+  "bugs": {
+    "url": "https://github.com/scaffauth/create-scaffauth/issues"
+  },
+  "homepage": "https://scaffauth.xyz",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "@octokit/rest": "^21.1.1",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "execa": "^9.5.2",
+    "fs-extra": "^11.3.0",
+    "handlebars": "^4.7.8",
+    "ora": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.13.1",
+    "eslint": "^9.20.0",
+    "eslint-config-prettier": "^10.0.1",
+    "prettier": "^3.5.1",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.0",
+    "vitest": "^3.0.5"
+  }
+}

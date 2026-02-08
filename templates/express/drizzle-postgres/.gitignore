@@ -1,0 +1,20 @@
+node_modules/
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Drizzle
+drizzle/migrations/meta/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,30 @@
+{
+  "name": "{{projectName}}",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:migrate": "tsx db/migrate.ts"
+  },
+  "dependencies": {
+    "better-auth": "^1.2.0",
+    "better-sqlite3": "^11.7.0",
+    "hono": "^4.7.0",
+    "kysely": "^0.27.0"
+{{#if (eq emailProvider "resend")}},
+    "resend": "^4.0.0"{{/if}}{{#if (eq emailProvider "sendgrid")}},
+    "@sendgrid/mail": "^8.1.0"{{/if}}{{#if (eq emailProvider "smtp")}},
+    "nodemailer": "^6.9.0"{{/if}}
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^22.13.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+{{#if (eq emailProvider "smtp")}},
+    "@types/nodemailer": "^6.4.0"{{/if}}
+  }
+}

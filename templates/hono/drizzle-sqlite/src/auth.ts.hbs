@@ -1,0 +1,106 @@
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "../drizzle/db";
+{{#if twoFactor}}
+import { twoFactor } from "better-auth/plugins";
+{{/if}}
+{{#if rbac}}
+import { admin } from "better-auth/plugins";
+{{/if}}
+{{#if (eq emailProvider "resend")}}
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+{{/if}}
+{{#if (eq emailProvider "sendgrid")}}
+import sgMail from "@sendgrid/mail";
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+{{/if}}
+{{#if (eq emailProvider "smtp")}}
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 587,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+{{/if}}
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "sqlite",
+  }),
+  emailAndPassword: {
+    enabled: true,
+{{#if emailProvider}}
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendEmail(user.email, "Reset your password", `<a href="${url}">Reset password</a>`);
+    },
+{{/if}}
+  },
+{{#if emailProvider}}
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail(user.email, "Verify your email", `<a href="${url}">Verify email</a>`);
+    },
+  },
+{{/if}}
+  {{#if providers.length}}
+  socialProviders: {
+    {{#each providers}}
+    {{this}}: {
+      clientId: process.env.{{uppercase this}}_CLIENT_ID!,
+      clientSecret: process.env.{{uppercase this}}_CLIENT_SECRET!,
+    },
+    {{/each}}
+  },
+  {{/if}}
+  {{#if (or twoFactor rbac)}}
+  plugins: [
+    {{#if twoFactor}}
+    twoFactor(),
+    {{/if}}
+    {{#if rbac}}
+    admin({
+      defaultRole: "user",
+    }),
+    {{/if}}
+  ],
+  {{/if}}
+  trustedOrigins: [process.env.CORS_ORIGIN || "http://localhost:3001"],
+});
+{{#if emailProvider}}
+
+async function sendEmail(to: string, subject: string, html: string) {
+{{#if (eq emailProvider "resend")}}
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM || "noreply@example.com",
+    to,
+    subject,
+    html,
+  });
+{{/if}}
+{{#if (eq emailProvider "sendgrid")}}
+  await sgMail.send({
+    from: process.env.EMAIL_FROM || "noreply@example.com",
+    to,
+    subject,
+    html,
+  });
+{{/if}}
+{{#if (eq emailProvider "smtp")}}
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM || "noreply@example.com",
+    to,
+    subject,
+    html,
+  });
+{{/if}}
+}
+{{/if}}

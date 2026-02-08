@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @db.VarChar(36)
+  name          String
+  email         String    @unique @db.VarChar(255)
+  emailVerified Boolean   @default(false)
+  image         String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @db.VarChar(36)
+  expiresAt DateTime
+  token     String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?  @db.VarChar(255)
+  userAgent String?  @db.Text
+  userId    String   @db.VarChar(36)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @db.VarChar(36)
+  accountId             String    @db.Text
+  providerId            String    @db.Text
+  userId                String    @db.VarChar(36)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @db.VarChar(36)
+  identifier String   @db.Text
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
