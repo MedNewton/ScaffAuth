@@ -1,6 +1,6 @@
 {
   "name": "create-scaffauth",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Scaffold production-ready Better Auth backends",
   "type": "module",
   "bin": {
