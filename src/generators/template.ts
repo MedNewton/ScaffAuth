@@ -52,6 +52,10 @@ function buildTemplateContext(config: ScaffauthConfig): TemplateContext {
     twoFactor: config.authConfig.twoFactor,
     rbac: config.authConfig.rbac,
     emailProvider: config.authConfig.emailProvider,
+    sessionExpiresIn: config.authConfig.session.expiresIn,
+    sessionUpdateAge: config.authConfig.session.updateAge,
+    sessionCookieCacheEnabled: config.authConfig.session.cookieCacheEnabled,
+    sessionCookieCacheMaxAge: config.authConfig.session.cookieCacheMaxAge,
     // Generate a random auth secret for the .env.example
     authSecret: crypto.randomBytes(32).toString("hex"),
   };

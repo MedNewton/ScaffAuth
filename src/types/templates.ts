@@ -9,6 +9,10 @@ export interface TemplateContext {
   twoFactor: boolean;
   rbac: boolean;
   emailProvider?: string;
+  sessionExpiresIn: number;
+  sessionUpdateAge: number;
+  sessionCookieCacheEnabled: boolean;
+  sessionCookieCacheMaxAge: number;
   authSecret?: string;
 }
 

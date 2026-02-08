@@ -1,6 +1,7 @@
 export type Framework = "hono" | "fastify" | "express";
 export type Database = "postgres" | "mysql" | "sqlite";
 export type ORM = "drizzle" | "prisma" | "kysely";
+export type SessionStrategy = "database" | "database-cookie-cache";
 
 export type OAuthProvider =
   | "github"
@@ -14,12 +15,21 @@ export type EmailProvider = "resend" | "sendgrid" | "smtp";
 
 export type DeploymentPlatform = "vercel" | "railway";
 
+export interface SessionConfig {
+  strategy: SessionStrategy;
+  expiresIn: number;
+  updateAge: number;
+  cookieCacheEnabled: boolean;
+  cookieCacheMaxAge: number;
+}
+
 export interface AuthConfig {
   emailPassword: boolean;
   providers: OAuthProvider[];
   twoFactor: boolean;
   emailProvider?: EmailProvider;
   rbac: boolean;
+  session: SessionConfig;
 }
 
 export interface DeploymentConfig {

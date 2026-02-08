@@ -67,6 +67,10 @@ describe("fileOperations", () => {
       twoFactor: false,
       rbac: false,
       emailProvider: undefined,
+      sessionExpiresIn: 604800,
+      sessionUpdateAge: 86400,
+      sessionCookieCacheEnabled: false,
+      sessionCookieCacheMaxAge: 300,
       authSecret: "secret",
     });
 

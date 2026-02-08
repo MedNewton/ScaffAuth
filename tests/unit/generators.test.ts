@@ -36,6 +36,13 @@ describe("generateProject", () => {
         twoFactor: true,
         rbac: true,
         emailProvider: "resend",
+        session: {
+          strategy: "database-cookie-cache",
+          expiresIn: 604800,
+          updateAge: 86400,
+          cookieCacheEnabled: true,
+          cookieCacheMaxAge: 300,
+        },
       },
     };
 
@@ -61,6 +68,10 @@ describe("generateProject", () => {
     expect(context.twoFactor).toBe(true);
     expect(context.rbac).toBe(true);
     expect(context.emailProvider).toBe("resend");
+    expect(context.sessionExpiresIn).toBe(604800);
+    expect(context.sessionUpdateAge).toBe(86400);
+    expect(context.sessionCookieCacheEnabled).toBe(true);
+    expect(context.sessionCookieCacheMaxAge).toBe(300);
     expect(context.authSecret).toMatch(/^[a-f0-9]{64}$/);
   });
 });

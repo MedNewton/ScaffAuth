@@ -4,11 +4,16 @@ import type {
   Framework,
   Database,
   ORM,
+  SessionStrategy,
   OAuthProvider,
   EmailProvider,
   DeploymentPlatform,
 } from "../types/index.js";
 import { validateProjectName } from "../utils/validators.js";
+
+function parsePositiveInteger(value: string): number {
+  return Number.parseInt(value.trim(), 10);
+}
 
 export async function gatherConfig(): Promise<ScaffauthConfig> {
   p.intro("Welcome to Scaffauth!");
@@ -179,6 +184,79 @@ export async function gatherConfig(): Promise<ScaffauthConfig> {
     process.exit(0);
   }
 
+  // --- Session configuration ---
+  const sessionStrategy = await p.select({
+    message: "Session strategy?",
+    options: [
+      {
+        value: "database" as SessionStrategy,
+        label: "Database sessions",
+        hint: "Store and validate sessions via database (recommended)",
+      },
+      {
+        value: "database-cookie-cache" as SessionStrategy,
+        label: "Database + cookie cache",
+        hint: "Add short-lived cookie cache for fewer DB reads",
+      },
+    ],
+  });
+  if (p.isCancel(sessionStrategy)) {
+    p.cancel("Operation cancelled.");
+    process.exit(0);
+  }
+
+  const sessionLifetimeDays = await p.text({
+    message: "Session lifetime (days)",
+    placeholder: "7",
+    initialValue: "7",
+    validate: (value) => {
+      const parsed = parsePositiveInteger(value);
+      if (!Number.isInteger(parsed) || parsed <= 0) {
+        return "Enter a positive integer number of days.";
+      }
+    },
+  });
+  if (p.isCancel(sessionLifetimeDays)) {
+    p.cancel("Operation cancelled.");
+    process.exit(0);
+  }
+
+  const sessionRefreshHours = await p.text({
+    message: "Session refresh/update age (hours)",
+    placeholder: "24",
+    initialValue: "24",
+    validate: (value) => {
+      const parsed = parsePositiveInteger(value);
+      if (!Number.isInteger(parsed) || parsed <= 0) {
+        return "Enter a positive integer number of hours.";
+      }
+    },
+  });
+  if (p.isCancel(sessionRefreshHours)) {
+    p.cancel("Operation cancelled.");
+    process.exit(0);
+  }
+
+  let cookieCacheMaxAgeSeconds = 300;
+  if (sessionStrategy === "database-cookie-cache") {
+    const cookieCacheMaxAge = await p.text({
+      message: "Cookie cache max age (seconds)",
+      placeholder: "300",
+      initialValue: "300",
+      validate: (value) => {
+        const parsed = parsePositiveInteger(value);
+        if (!Number.isInteger(parsed) || parsed <= 0) {
+          return "Enter a positive integer number of seconds.";
+        }
+      },
+    });
+    if (p.isCancel(cookieCacheMaxAge)) {
+      p.cancel("Operation cancelled.");
+      process.exit(0);
+    }
+    cookieCacheMaxAgeSeconds = parsePositiveInteger(cookieCacheMaxAge);
+  }
+
   // --- GitHub repo ---
   const createGitHubRepo = await p.confirm({
     message: "Create a GitHub repository?",
@@ -254,6 +332,13 @@ export async function gatherConfig(): Promise<ScaffauthConfig> {
       twoFactor,
       emailProvider,
       rbac,
+      session: {
+        strategy: sessionStrategy,
+        expiresIn: parsePositiveInteger(sessionLifetimeDays) * 24 * 60 * 60,
+        updateAge: parsePositiveInteger(sessionRefreshHours) * 60 * 60,
+        cookieCacheEnabled: sessionStrategy === "database-cookie-cache",
+        cookieCacheMaxAge: cookieCacheMaxAgeSeconds,
+      },
     },
     deployment: deploymentConfig,
     github: githubConfig,
@@ -276,6 +361,13 @@ export function getDefaultConfig(
       providers: ["github"],
       twoFactor: false,
       rbac: false,
+      session: {
+        strategy: "database",
+        expiresIn: 7 * 24 * 60 * 60,
+        updateAge: 24 * 60 * 60,
+        cookieCacheEnabled: false,
+        cookieCacheMaxAge: 300,
+      },
     },
   };
 }
